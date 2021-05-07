@@ -5,7 +5,7 @@ import email
 import smtplib
 import datetime
 from pytz import timezone
-from urllib.request import urlopen
+import urllib
 import json
 
 
@@ -44,15 +44,18 @@ def covid_center_search():
     for period in range(32):
         new_date = datetime.datetime.today() + datetime.timedelta(days=period)
         new_date_str = new_date.strftime("%d-%m-%Y")
-        response = urlopen("https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id"
-                           "=304&date=" + new_date_str).read().decode('utf-8')
-        response_json = json.loads(response)
-        for center in response_json.get("centers"):
-            for session in center.get("sessions"):
-                if int(session.get("min_age_limit")) < 45:
-                    available_centers.append(center.get("name") + " on " + new_date_str)
-        print(new_date_str+" "+str(len(available_centers)))
-    print("total-"+str(len(available_centers)))
+        covin_url = "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id=304" \
+                    "&date=" + new_date_str
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:23.0) Gecko/20100101 Firefox/23.0'}
+        req = urllib.request.Request(url=covin_url, headers=headers)
+        response = urllib.request.urlopen(req).read().decode('utf-8')
+    response_json = json.loads(response)
+    for center in response_json.get("centers"):
+        for session in center.get("sessions"):
+            if int(session.get("min_age_limit")) < 45:
+                available_centers.append(center.get("name") + " on " + new_date_str)
+    print(new_date_str + " " + str(len(available_centers)))
+    print("total-" + str(len(available_centers)))
     if len(available_centers) > 0:
         print(available_centers)
         send_mail("Covid Vaccine available", ",<br/>".join(available_centers))
@@ -61,8 +64,8 @@ def covid_center_search():
 
 
 def product_availability_search():
-    URL = "https://www.casioindiashop.com/Watches/AD249/Casio-Youth-Series-WS-1200H-3AVDF-(AD249)-Digital-Watch.html"
-    # URL = "https://www.casioindiashop.com/Watches/D218/Casio-Youth-Series-AE-1500WH-1AVDF-(D218)-Digital-Watch.html"
+    # URL = "https://www.casioindiashop.com/Watches/AD249/Casio-Youth-Series-WS-1200H-3AVDF-(AD249)-Digital-Watch.html"
+    URL = "https://www.casioindiashop.com/Watches/D218/Casio-Youth-Series-AE-1500WH-1AVDF-(D218)-Digital-Watch.html"
     r = requests.get(URL)
     soup = BeautifulSoup(r.content,
                          'html5lib')
