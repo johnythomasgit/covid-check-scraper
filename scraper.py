@@ -93,5 +93,5 @@ def product_availability_search():
 
 
 if __name__ == "__main__":
-    # product_availability_search()
+    product_availability_search()
     covid_center_search()
