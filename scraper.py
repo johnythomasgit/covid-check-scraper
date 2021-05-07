@@ -46,7 +46,10 @@ def covid_center_search():
         new_date_str = new_date.strftime("%d-%m-%Y")
         covin_url = "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id=304" \
                     "&date=" + new_date_str
-        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:23.0) Gecko/20100101 Firefox/23.0'}
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:23.0) Gecko/20100101 Firefox/23.0',
+                   'Accept-Language': 'en_US',
+                   'Host': 'cdn-api.co-vin.in'
+                   }
         req = urllib.request.Request(url=covin_url, headers=headers)
         response = urllib.request.urlopen(req).read().decode('utf-8')
     response_json = json.loads(response)
