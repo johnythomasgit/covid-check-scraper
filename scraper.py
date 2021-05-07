@@ -1,14 +1,13 @@
 import bs4.element
 import requests
 from bs4 import BeautifulSoup
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
+import email
 import smtplib
 
 
 def send_mail(subject, message):
     # create message object instance
-    msg = MIMEMultipart()
+    msg = email.message.Message()
 
     # setup the parameters of the message
     password = "jgmanjbbv"
@@ -17,7 +16,8 @@ def send_mail(subject, message):
     msg['Subject'] = subject
 
     # add in the message body
-    msg.attach(MIMEText(message, 'plain'))
+    msg.add_header('Content-Type', 'text/html')
+    msg.set_payload(message)
 
     # create server
     server = smtplib.SMTP('smtp.gmail.com: 587')
