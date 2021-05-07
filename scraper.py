@@ -57,7 +57,15 @@ def covid_center_search():
         # response = urllib.request.urlopen(req).read().decode('utf-8')
         response = requests.get(covin_url, headers=headers)
         print(response.status_code)
-        print(response.json())
+        print(response.headers)
+        print(response.is_permanent_redirect)
+        print(response.apparent_encoding)
+        print(response.content)
+        print(response.links)
+        print(response.__class__)
+        print(response.is_permanent_redirect)
+        print(response.text)
+
         response_json = response.json()
 
         for center in response_json.get("centers"):
@@ -80,14 +88,13 @@ def product_availability_search():
     soup = BeautifulSoup(r.content,
                          'html5lib')
     divTag = soup.find("div", attrs={"class": "price"}).find(attrs={"class": "flbuts"})
-    print(divTag)
     if divTag.find("a", attrs={"class": "cart-buy"}) or divTag.find("a", "Buy Now"):
-        print("Available")
+        print("Product Available")
         send_mail("Your watch is now available",
                   "<a href=\"https://www.casioindiashop.com/Watches/D218/Casio-Youth-Series"
                   "-AE-1500WH-1AVDF-(D218)-Digital-Watch.html\"> check it now</a>")
     else:
-        print("Not Available")
+        print("Product Not Available")
         # send_mail("Out of stock", "<a href=\"https://www.casioindiashop.com/Watches/D218/Casio-Youth-Series"
         #                           "-AE-1500WH-1AVDF-(D218)-Digital-Watch.html\"> check it now</a>")
 
