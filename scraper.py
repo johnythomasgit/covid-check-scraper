@@ -3,6 +3,8 @@ import requests
 from bs4 import BeautifulSoup
 import email
 import smtplib
+import datetime
+from pytz import timezone
 
 
 def send_mail(subject, message):
@@ -13,8 +15,8 @@ def send_mail(subject, message):
     password = "jgmanjbbv"
     msg['From'] = "johnythomas.online@gmail.com"
     msg['To'] = "johnyvtk@gmail.com"
-    msg['Subject'] = subject
-
+    msg['Subject'] = subject + " " + datetime.datetime.now(timezone('Asia/Kolkata')).strftime("%b,%d %I:%M %p")
+    print(msg['Subject'])
     # add in the message body
     msg.add_header('Content-Type', 'text/html')
     msg.set_payload(message)
