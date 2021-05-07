@@ -54,9 +54,12 @@ def covid_center_search():
                    'Connection': 'keep-alive'
                    }
         print(headers)
-        req = urllib.request.Request(url=covin_url, headers=headers)
-        response = urllib.request.urlopen(req).read().decode('utf-8')
-        response_json = json.loads(response)
+        # req = urllib.request.Request(url=covin_url, headers=headers)
+        # response = urllib.request.urlopen(req).read().decode('utf-8')
+        response = requests.get(covin_url, headers=headers)
+        print(response.status_code)
+        print(response.json())
+        response_json = response.json()
         for center in response_json.get("centers"):
             for session in center.get("sessions"):
                 if int(session.get("min_age_limit")) < 45:
@@ -91,5 +94,5 @@ def product_availability_search():
 
 
 if __name__ == "__main__":
-    product_availability_search()
+    # product_availability_search()
     covid_center_search()
