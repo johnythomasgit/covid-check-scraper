@@ -62,6 +62,7 @@ def covid_center_search():
                 if int(session.get("min_age_limit")) < 45:
                     available_centers.append(center.get("name") + " on " + new_date_str)
         print(new_date_str + " " + str(len(available_centers)))
+
     print("total-" + str(len(available_centers)))
     if len(available_centers) > 0:
         print(available_centers)
