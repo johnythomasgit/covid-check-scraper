@@ -1,4 +1,4 @@
-import bs4.element
+# web scraping functions for checking stock availability
 import requests
 from bs4 import BeautifulSoup
 import email
@@ -56,12 +56,12 @@ def covid_center_search():
         print(headers)
         req = urllib.request.Request(url=covin_url, headers=headers)
         response = urllib.request.urlopen(req).read().decode('utf-8')
-    response_json = json.loads(response)
-    for center in response_json.get("centers"):
-        for session in center.get("sessions"):
-            if int(session.get("min_age_limit")) < 45:
-                available_centers.append(center.get("name") + " on " + new_date_str)
-    print(new_date_str + " " + str(len(available_centers)))
+        response_json = json.loads(response)
+        for center in response_json.get("centers"):
+            for session in center.get("sessions"):
+                if int(session.get("min_age_limit")) < 45:
+                    available_centers.append(center.get("name") + " on " + new_date_str)
+        print(new_date_str + " " + str(len(available_centers)))
     print("total-" + str(len(available_centers)))
     if len(available_centers) > 0:
         print(available_centers)
