@@ -3,3 +3,5 @@ beautifulsoup4
 html5lib
 datetime
 pytz
+json
+urllib

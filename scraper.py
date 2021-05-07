@@ -5,6 +5,8 @@ import email
 import smtplib
 import datetime
 from pytz import timezone
+from urllib.request import urlopen
+import json
 
 
 def send_mail(subject, message):
@@ -37,9 +39,30 @@ def send_mail(subject, message):
     print("mail send successfully")
 
 
-if __name__ == "__main__":
-    # URL = "https://www.casioindiashop.com/Watches/AD249/Casio-Youth-Series-WS-1200H-3AVDF-(AD249)-Digital-Watch.html"
-    URL = "https://www.casioindiashop.com/Watches/D218/Casio-Youth-Series-AE-1500WH-1AVDF-(D218)-Digital-Watch.html"
+def covid_center_search():
+    available_centers = []
+    for period in range(32):
+        new_date = datetime.datetime.today() + datetime.timedelta(days=period)
+        new_date_str = new_date.strftime("%d-%m-%Y")
+        response = urlopen("https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id"
+                           "=304&date=" + new_date_str).read().decode('utf-8')
+        response_json = json.loads(response)
+        for center in response_json.get("centers"):
+            for session in center.get("sessions"):
+                if int(session.get("min_age_limit")) < 45:
+                    available_centers.append(center.get("name") + " on " + new_date_str)
+        print(new_date_str+" "+str(len(available_centers)))
+    print("total-"+str(len(available_centers)))
+    if len(available_centers) > 0:
+        print(available_centers)
+        send_mail("Covid Vaccine available", ",<br/>".join(available_centers))
+    else:
+        print("Not available")
+
+
+def product_availability_search():
+    URL = "https://www.casioindiashop.com/Watches/AD249/Casio-Youth-Series-WS-1200H-3AVDF-(AD249)-Digital-Watch.html"
+    # URL = "https://www.casioindiashop.com/Watches/D218/Casio-Youth-Series-AE-1500WH-1AVDF-(D218)-Digital-Watch.html"
     r = requests.get(URL)
     soup = BeautifulSoup(r.content,
                          'html5lib')
@@ -52,5 +75,10 @@ if __name__ == "__main__":
                   "-AE-1500WH-1AVDF-(D218)-Digital-Watch.html\"> check it now</a>")
     else:
         print("Not Available")
-        send_mail("Out of stock", "<a href=\"https://www.casioindiashop.com/Watches/D218/Casio-Youth-Series"
-                                  "-AE-1500WH-1AVDF-(D218)-Digital-Watch.html\"> check it now</a>")
+        # send_mail("Out of stock", "<a href=\"https://www.casioindiashop.com/Watches/D218/Casio-Youth-Series"
+        #                           "-AE-1500WH-1AVDF-(D218)-Digital-Watch.html\"> check it now</a>")
+
+
+if __name__ == "__main__":
+    product_availability_search()
+    covid_center_search()
