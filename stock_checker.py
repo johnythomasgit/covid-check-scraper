@@ -12,8 +12,8 @@ import json
 def send_mail(subject, message):
     # create message object instance
     msg = email.message.Message()
-    # "jyothisvthomas@gmail.com",
-    mail_list = ["johnyvtk@gmail.com"]
+    #
+    mail_list = ["jyothisvthomas@gmail.com", "johnyvtk@gmail.com"]
     # setup the parameters of the message
     password = "jgmanjbbv"
     msg['From'] = "johnythomas.online@gmail.com"
