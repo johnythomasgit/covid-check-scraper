@@ -80,6 +80,7 @@ def covid_center_search():
         send_mail("Covid Vaccine available", ",<br/>".join(available_centers))
     else:
         print("Not available")
+        # send_mail("No Luck ", "covid vaccine not available")
 
 
 def product_availability_search():
