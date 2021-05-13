@@ -7,7 +7,6 @@ import datetime
 from pytz import timezone
 import urllib
 import json
-import time
 
 
 def send_mail(subject, message):
