@@ -7,6 +7,7 @@ import datetime
 from pytz import timezone
 import urllib
 import json
+import time
 
 
 def send_mail(subject, message):
@@ -56,15 +57,15 @@ def covid_center_search():
         # req = urllib.request.Request(url=covin_url, headers=headers)
         # response = urllib.request.urlopen(req).read().decode('utf-8')
         response = requests.get(covin_url, headers=headers)
-        print(response.status_code)
-        print(response.headers)
-        print(response.is_permanent_redirect)
-        print(response.apparent_encoding)
-        print(response.content)
-        print(response.links)
-        print(response.__class__)
-        print(response.is_permanent_redirect)
-        print(response.text)
+        # print(response.status_code)
+        # print(response.headers)
+        # print(response.is_permanent_redirect)
+        # print(response.apparent_encoding)
+        # print(response.content)
+        # print(response.links)
+        # print(response.__class__)
+        # print(response.is_permanent_redirect)
+        # print(response.text)
 
         response_json = response.json()
 
@@ -100,5 +101,5 @@ def product_availability_search():
 
 
 if __name__ == "__main__":
-    product_availability_search()
+    # product_availability_search()
     covid_center_search()
