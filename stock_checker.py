@@ -19,7 +19,7 @@ def send_mail(subject, message):
     try:
         msg = email.message.Message()
         #
-        mail_list = ["jyothisvthomas@gmail.com", "johnyvtk@gmail.com"]
+        mail_list = ["jyothisvthomas@gmail.com", "johnyvtk@gmail.com", "1sreerajvs@gmail.com"]
         # setup the parameters of the message
         password = "jgmanjbbv"
         msg['From'] = "johnythomas.online@gmail.com"
@@ -75,30 +75,35 @@ def covid_center_search():
         # response = urllib.request.urlopen(req).read().decode('utf-8')
         response = requests.get(covin_url, headers=headers)
         response_json = response.json()
+        # print(response.text)
 
         for center in response_json.get("centers"):
             for session in center.get("sessions"):
-                if int(session.get("min_age_limit")) < 45:
-                    available_centers.append(
-                        "{} {} available at {} on {}".format(session['available_capacity'], session['vaccine'],
-                                                             center['name'], session['date']))
-                    available_count += int(session['available_capacity'])
-                else:
-                    elder_available_centers.append(
-                        "{} {} available at {} on {}".format(session['available_capacity'], session['vaccine'],
-                                                             center['name'], session['date']))
-                    elder_available_count += int(session['available_capacity'])
-
+                if int(session["available_capacity"]) > 0:
+                    if int(session.get("min_age_limit")) < 45:
+                        available_centers.append(
+                            "{} {} available at {} on {}".format(session['available_capacity'], session['vaccine'],
+                                                                 center['name'], session['date']))
+                        available_count += int(session['available_capacity'])
+                        # print(str(available_count))
+                    else:
+                        elder_available_centers.append(
+                            "{} {} available at {} on {}".format(session['available_capacity'], session['vaccine'],
+                                                                 center['name'], session['date']))
+                        elder_available_count += int(session['available_capacity'])
+                        # print(str(elder_available_count))
     if available_count > 0:
-        print("available_count - " + available_count)
-        send_mail("Covid Vaccine available for youth", ",<br/>".join(available_centers))
+        print("available_count - " + str(available_count))
+        send_mail("Covid Vaccine available for youth", ",<br/>".join(available_centers) + "<br/><br/>Total - "
+                  + str(available_count))
     else:
         print("Not available")
         # send_mail("No Luck ", "covid vaccine not available")
 
     if elder_available_count > 0:
-        print("elder_available_count - " + elder_available_count)
-        send_mail("Covid Vaccine available for senior citizens", ",<br/>".join(elder_available_centers))
+        print("elder_available_count - " + str(elder_available_count))
+        send_mail("Covid Vaccine available for senior citizens", ",<br/>".join(elder_available_centers)
+                  + "<br/><br/>Total - " + str(elder_available_count))
     if today4_56 < now < today5_04:
         if len(elder_available_centers) > 0:
             print("elder_available_centers - " + str(len(elder_available_centers)))
