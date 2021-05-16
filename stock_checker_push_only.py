@@ -73,8 +73,7 @@ def covid_center_search():
     print("available_count - " + str(available_count))
     print("elder_available_count - " + str(elder_available_count))
 
-    # if (available_count > 0) and (available_count != history['available_count']):
-    if True:
+    if (available_count > 0) and (available_count != history['available_count']):
         push_notification(str(available_count) + " covid Vaccines available for youth")
 
     if (elder_available_count > 0) and (elder_available_count != history['elder_available_count']):
