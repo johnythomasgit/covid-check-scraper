@@ -1,16 +1,34 @@
 # web scraping functions for checking stock availability
+import datetime
+import email
+import json
+import os
+import smtplib
+import socket
 import sys
+import time
+
 import requests
 from bs4 import BeautifulSoup
-import email
-import smtplib
-import datetime
-from pytz import timezone
-import urllib
-import json
-import socket
-import os
-import time
+from twilio.rest import Client
+
+
+def send_sms(message):
+    account_sid = 'AC4da4f36f526a980bb27704df841f9b82'
+    auth_token = '02164341e48a4125aac6ae68c245ce14'
+    twilio_client = Client(account_sid, auth_token)
+    my_twilio_number = '+14153603991'
+    dest_cell_phone = '+919048166175'
+    my_message = twilio_client.messages.create(body=message, from_=my_twilio_number, to=dest_cell_phone)
+
+
+def send_push_notification(message):
+    notification_url = "https://notify.run/uIaG3jKEsyPGz13w"
+    headers = {
+        'Content-Type': 'application/x-www-form-urlencoded'
+    }
+    response = requests.request("POST", notification_url, headers=headers, data=message)
+    print(response.text)
 
 
 def send_mail(subject, message):
@@ -66,8 +84,6 @@ def covid_center_search():
     elder_available_centers = []
     elder_available_count = 0
     now = datetime.datetime.now()
-    today4_56 = now.replace(hour=16, minute=56, second=0, microsecond=0)
-    today5_04 = now.replace(hour=17, minute=4, second=0, microsecond=0)
     file_path = "storage.txt"
 
     if not os.path.exists(file_path):
@@ -88,8 +104,6 @@ def covid_center_search():
             'Host': 'cdn-api.co-vin.in',
             'Connection': 'keep-alive'
         }
-        # req = urllib.request.Request(url=covin_url, headers=headers)
-        # response = urllib.request.urlopen(req).read().decode('utf-8')
         response = requests.get(covin_url, headers=headers)
         response_json = response.json()
         # print(response.text)
@@ -112,25 +126,24 @@ def covid_center_search():
     print("available_count - " + str(available_count))
     print("elder_available_count - " + str(elder_available_count))
     if (available_count > 0) and (available_count != history['available_count']):
-        send_mail("Covid Vaccine available for youth", ",<br/>".join(available_centers) + "<br/><br/>Total - "
-                  + str(available_count))
+        send_mail("Covid Vaccine available for youth", ",<br/>".join(available_centers)
+                  + "<br/><br/>Total - " + str(available_count)
+                  + "<br/><br/> Please subscribe to https://notify.run/c/uIaG3jKEsyPGz13w to receive notifications")
+        send_push_notification("Covid Vaccine available for youth \\n"
+                               + ",\\n".join(available_centers)
+                               + "\\nTotal - " + str(available_count)
+                               + "\\n Please subscribe to https://notify.run/c/uIaG3jKEsyPGz13w to receive notifications")
+
     if (elder_available_count > 0) and (elder_available_count != history['elder_available_count']):
         send_mail("Covid Vaccine available for senior citizens", ",<br/>".join(elder_available_centers)
-                  + "<br/><br/>Total - " + str(elder_available_count))
-
-    # if today4_56 < now < today5_04:
-    #     if len(elder_available_centers) > 0:
-    #         print("elder_available_centers - " + str(len(elder_available_centers)))
-    #         send_mail("Covid Vaccine status for senior citizens", ",<br/>".join(elder_available_centers))
-    #     if len(available_centers) > 0:
-    #         print("available_centers - " + str(len(available_centers)))
-    #         send_mail("Covid Vaccine status for youth", ",<br/>".join(available_centers))
+                  + "<br/><br/>Total - " + str(elder_available_count)
+                  + "<br/><br/> Please subscribe to https://notify.run/c/uIaG3jKEsyPGz13w to receive notifications")
 
 
 def product_availability_search():
-    # URL = "https://www.casioindiashop.com/Watches/AD249/Casio-Youth-Series-WS-1200H-3AVDF-(AD249)-Digital-Watch.html"
-    URL = "https://www.casioindiashop.com/Watches/D218/Casio-Youth-Series-AE-1500WH-1AVDF-(D218)-Digital-Watch.html"
-    r = requests.get(URL)
+    # product_url = "https://www.casioindiashop.com/Watches/AD249/Casio-Youth-Series-WS-1200H-3AVDF-(AD249)-Digital-Watch.html"
+    product_url = "https://www.casioindiashop.com/Watches/D218/Casio-Youth-Series-AE-1500WH-1AVDF-(D218)-Digital-Watch.html"
+    r = requests.get(product_url)
     soup = BeautifulSoup(r.content,
                          'html5lib')
     divTag = soup.find("div", attrs={"class": "price"}).find(attrs={"class": "flbuts"})
@@ -150,3 +163,5 @@ if __name__ == "__main__":
     time.tzset()
     # product_availability_search()
     covid_center_search()
+    # send_sms("This is my next the message")
+    # send_push_notification("message test again")
