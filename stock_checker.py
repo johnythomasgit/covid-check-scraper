@@ -49,6 +49,16 @@ def send_mail(subject, message):
         print("Unknown error:" + sys.exc_info()[0])
 
 
+def write_file(available_count, elder_available_count, file_path):
+    history = {
+        "available_count": available_count,
+        "elder_available_count": elder_available_count,
+        "timestamp": str(datetime.datetime.now().timestamp())
+    }
+    with open(file_path, 'w') as file:
+        json.dump(history, file)
+
+
 def covid_center_search():
     print("covid center availability search - " + datetime.datetime.now().strftime("%H:%M:%S"))
     available_centers = []
@@ -58,6 +68,13 @@ def covid_center_search():
     now = datetime.datetime.now()
     today4_56 = now.replace(hour=16, minute=56, second=0, microsecond=0)
     today5_04 = now.replace(hour=17, minute=4, second=0, microsecond=0)
+    file_path = "storage.txt"
+
+    if not os.path.exists(file_path):
+        write_file(0, 0, file_path)
+    else:
+        with open(file_path) as file:
+            history = json.load(file)
 
     for period in range(32):
         new_date = datetime.datetime.today() + datetime.timedelta(days=period)
@@ -92,25 +109,22 @@ def covid_center_search():
                                                                  center['name'], session['date']))
                         elder_available_count += int(session['available_capacity'])
                         # print(str(elder_available_count))
-    if available_count > 0:
-        print("available_count - " + str(available_count))
+    print("available_count - " + str(available_count))
+    print("elder_available_count - " + str(elder_available_count))
+    if (available_count > 0) and (available_count != history['available_count']):
         send_mail("Covid Vaccine available for youth", ",<br/>".join(available_centers) + "<br/><br/>Total - "
                   + str(available_count))
-    else:
-        print("Not available")
-        # send_mail("No Luck ", "covid vaccine not available")
-
-    if elder_available_count > 0:
-        print("elder_available_count - " + str(elder_available_count))
+    if (elder_available_count > 0) and (elder_available_count != history['elder_available_count']):
         send_mail("Covid Vaccine available for senior citizens", ",<br/>".join(elder_available_centers)
                   + "<br/><br/>Total - " + str(elder_available_count))
-    if today4_56 < now < today5_04:
-        if len(elder_available_centers) > 0:
-            print("elder_available_centers - " + str(len(elder_available_centers)))
-            send_mail("Covid Vaccine status for senior citizens", ",<br/>".join(elder_available_centers))
-        if len(available_centers) > 0:
-            print("available_centers - " + str(len(available_centers)))
-            send_mail("Covid Vaccine status for youth", ",<br/>".join(available_centers))
+
+    # if today4_56 < now < today5_04:
+    #     if len(elder_available_centers) > 0:
+    #         print("elder_available_centers - " + str(len(elder_available_centers)))
+    #         send_mail("Covid Vaccine status for senior citizens", ",<br/>".join(elder_available_centers))
+    #     if len(available_centers) > 0:
+    #         print("available_centers - " + str(len(available_centers)))
+    #         send_mail("Covid Vaccine status for youth", ",<br/>".join(available_centers))
 
 
 def product_availability_search():
