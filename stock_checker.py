@@ -1,4 +1,6 @@
-# web scraping functions for checking stock availability
+""" Automatic Stock Checking Functions """
+
+
 import datetime
 import email
 import json
@@ -7,7 +9,6 @@ import smtplib
 import socket
 import sys
 import time
-
 import requests
 from bs4 import BeautifulSoup
 from twilio.rest import Client
@@ -22,7 +23,7 @@ def send_sms(message):
     my_message = twilio_client.messages.create(body=message, from_=my_twilio_number, to=dest_cell_phone)
 
 
-def send_push_notification(message):
+def push_notification(message):
     notification_url = "https://notify.run/uIaG3jKEsyPGz13w"
     headers = {
         'Content-Type': 'application/x-www-form-urlencoded'
@@ -36,8 +37,8 @@ def send_mail(subject, message):
     global server
     try:
         msg = email.message.Message()
-        #
-        mail_list = ["jyothisvthomas@gmail.com", "johnyvtk@gmail.com", "1sreerajvs@gmail.com"]
+        # , "1sreerajvs@gmail.com"
+        mail_list = ["jyothisvthomas@gmail.com", "johnyvtk@gmail.com"]
         # setup the parameters of the message
         password = "jgmanjbbv"
         msg['From'] = "johnythomas.online@gmail.com"
@@ -125,19 +126,19 @@ def covid_center_search():
                         # print(str(elder_available_count))
     print("available_count - " + str(available_count))
     print("elder_available_count - " + str(elder_available_count))
-    if (available_count > 0) and (available_count != history['available_count']):
+    # if (available_count > 0) and (available_count != history['available_count']):
+    if True:
         send_mail("Covid Vaccine available for youth", ",<br/>".join(available_centers)
                   + "<br/><br/>Total - " + str(available_count)
                   + "<br/><br/> Please subscribe to https://notify.run/c/uIaG3jKEsyPGz13w to receive notifications")
-        send_push_notification("Covid Vaccine available for youth \\n"
-                               + ",\\n".join(available_centers)
-                               + "\\nTotal - " + str(available_count)
-                               + "\\n Please subscribe to https://notify.run/c/uIaG3jKEsyPGz13w to receive notifications")
+        # push_notification(str(available_count) + " covid Vaccines available for youth")
 
     if (elder_available_count > 0) and (elder_available_count != history['elder_available_count']):
         send_mail("Covid Vaccine available for senior citizens", ",<br/>".join(elder_available_centers)
                   + "<br/><br/>Total - " + str(elder_available_count)
                   + "<br/><br/> Please subscribe to https://notify.run/c/uIaG3jKEsyPGz13w to receive notifications")
+        # push_notification(str(elder_available_count) + " covid Vaccines available for senior citizens")
+    write_file(available_count, elder_available_count, file_path)
 
 
 def product_availability_search():
@@ -163,5 +164,3 @@ if __name__ == "__main__":
     time.tzset()
     # product_availability_search()
     covid_center_search()
-    # send_sms("This is my next the message")
-    # send_push_notification("message test again")
