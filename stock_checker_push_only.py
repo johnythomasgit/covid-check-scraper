@@ -33,17 +33,26 @@ def covid_center_search():
     available_count = 0
     elder_available_centers = []
     elder_available_count = 0
-    file_path = "storage.txt"
-
+    file_path = "storage_push.txt"
+    history = {
+        "available_count": available_count,
+        "elder_available_count": elder_available_count,
+        "timestamp": str(datetime.datetime.now().timestamp())
+    }
     if not os.path.exists(file_path):
         write_file(0, 0, file_path)
     else:
-        with open(file_path) as file:
-            history = json.load(file)
+        try:
+            with open(file_path) as file:
+                history = json.load(file)
+                print(history)
+        except:
+            print("Error occurred in reading file")
 
-    for period in range(32):
-        new_date = datetime.datetime.today() + datetime.timedelta(days=period)
+    for period in range(6):
+        new_date = datetime.datetime.today() + datetime.timedelta(days=period*7)
         new_date_str = new_date.strftime("%d-%m-%Y")
+        print(new_date_str)
         covin_url = "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id=304" \
                     "&date=" + new_date_str
         headers = {
@@ -54,7 +63,7 @@ def covid_center_search():
             'Connection': 'keep-alive'
         }
         response = requests.get(covin_url, headers=headers)
-        # print(response.text)
+        print(response.text)
         response_json = response.json()
 
         for center in response_json.get("centers"):
@@ -83,4 +92,6 @@ def covid_center_search():
 if __name__ == "__main__":
     os.environ['TZ'] = 'Asia/Kolkata'
     time.tzset()
-    covid_center_search()
+    while True:
+        covid_center_search()
+        time.sleep(30)

@@ -37,8 +37,8 @@ def send_mail(subject, message):
     global server
     try:
         msg = email.message.Message()
-        # , "1sreerajvs@gmail.com"
-        mail_list = ["jyothisvthomas@gmail.com", "johnyvtk@gmail.com"]
+        #
+        mail_list = ["jyothisvthomas@gmail.com", "johnyvtk@gmail.com", "1sreerajvs@gmail.com"]
         # setup the parameters of the message
         password = "jgmanjbbv"
         msg['From'] = "johnythomas.online@gmail.com"
@@ -90,11 +90,14 @@ def covid_center_search():
     if not os.path.exists(file_path):
         write_file(0, 0, file_path)
     else:
-        with open(file_path) as file:
-            history = json.load(file)
+        try:
+            with open(file_path) as file:
+                history = json.load(file)
+        except:
+            print("Error occurred in reading file")
 
-    for period in range(32):
-        new_date = datetime.datetime.today() + datetime.timedelta(days=period)
+    for period in range(6):
+        new_date = datetime.datetime.today() + datetime.timedelta(days=period*7)
         new_date_str = new_date.strftime("%d-%m-%Y")
         covin_url = "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id=304" \
                     "&date=" + new_date_str
