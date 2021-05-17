@@ -141,6 +141,4 @@ def covid_center_search():
 if __name__ == "__main__":
     os.environ['TZ'] = 'Asia/Kolkata'
     time.tzset()
-    while True:
-        covid_center_search()
-        time.sleep(120)
+    covid_center_search()
