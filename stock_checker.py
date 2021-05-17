@@ -1,6 +1,5 @@
 """ Automatic Stock Checking Functions """
 
-
 import datetime
 import email
 import json
@@ -97,7 +96,7 @@ def covid_center_search():
             print("Error occurred in reading file")
 
     for period in range(6):
-        new_date = datetime.datetime.today() + datetime.timedelta(days=period*7)
+        new_date = datetime.datetime.today() + datetime.timedelta(days=period * 7)
         new_date_str = new_date.strftime("%d-%m-%Y")
         covin_url = "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id=304" \
                     "&date=" + new_date_str
