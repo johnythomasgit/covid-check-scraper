@@ -1,2 +1,2 @@
 # Stock Check 
-Basic webscraper stock checking script in python.
+Basic webscraper script in python for checking stock availability.
