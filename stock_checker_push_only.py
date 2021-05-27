@@ -63,7 +63,7 @@ def covid_center_search():
             'Connection': 'keep-alive'
         }
         response = requests.get(covin_url, headers=headers)
-        print(response.text)
+        # print(response.text)
         response_json = response.json()
 
         for center in response_json.get("centers"):
