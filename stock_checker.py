@@ -28,7 +28,7 @@ def push_notification(message):
         'Content-Type': 'application/x-www-form-urlencoded'
     }
     response = requests.request("POST", notification_url, headers=headers, data=message)
-    print(response.text)
+    # print(response.text)
 
 
 def send_mail(subject, message):
@@ -141,6 +141,7 @@ def covid_center_search():
                   + "<br/><br/> Please subscribe to https://notify.run/c/uIaG3jKEsyPGz13w to receive notifications")
         # push_notification(str(elder_available_count) + " covid Vaccines available for senior citizens")
     write_file(available_count, elder_available_count, file_path)
+
 
 
 def product_availability_search():

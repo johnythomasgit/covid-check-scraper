@@ -40,6 +40,7 @@ def covid_center_search():
         "timestamp": str(datetime.datetime.now().timestamp())
     }
     if not os.path.exists(file_path):
+        print("file not exists")
         write_file(0, 0, file_path)
     else:
         try:
@@ -87,6 +88,7 @@ def covid_center_search():
 
     if (elder_available_count > 0) and (elder_available_count != history['elder_available_count']):
         push_notification(str(elder_available_count) + " covid Vaccines available for senior citizens")
+    write_file(available_count, elder_available_count, file_path)
 
 
 if __name__ == "__main__":
