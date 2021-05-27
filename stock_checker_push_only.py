@@ -14,7 +14,7 @@ def push_notification(message):
         'Content-Type': 'application/x-www-form-urlencoded'
     }
     response = requests.request("POST", notification_url, headers=headers, data=message)
-    print(response.text)
+    # print(response.text)
 
 
 def write_file(available_count, elder_available_count, file_path):
