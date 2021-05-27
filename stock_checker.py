@@ -92,6 +92,7 @@ def covid_center_search():
         try:
             with open(file_path) as file:
                 history = json.load(file)
+                print("history"+ history)
         except:
             print("Error occurred in reading file")
 
