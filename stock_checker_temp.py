@@ -113,14 +113,14 @@ def covid_center_search():
                 if int(session["available_capacity"]) > 0:
                     if int(session.get("min_age_limit")) < 45:
                         available_centers.append(
-                            "{} {} available at {} on {}".format(session['available_capacity'], session['vaccine'],
+                            "{} {} available at {} on {}".format(session['available_capacity_dose1'], session['vaccine'],
                                                                  center['name'], session['date']))
-                        available_count += int(session['available_capacity'])
+                        available_count += int(session['available_capacity_dose1'])
                     else:
                         elder_available_centers.append(
-                            "{} {} available at {} on {}".format(session['available_capacity'], session['vaccine'],
+                            "{} {} available at {} on {}".format(session['available_capacity_dose1'], session['vaccine'],
                                                                  center['name'], session['date']))
-                        elder_available_count += int(session['available_capacity'])
+                        elder_available_count += int(session['available_capacity_dose1'])
     print("available_count - " + str(available_count))
     print("elder_available_count - " + str(elder_available_count))
 
