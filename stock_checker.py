@@ -37,7 +37,7 @@ def send_mail(subject, message):
     try:
         msg = email.message.Message()
         #
-        mail_list = ["jyothisvthomas@gmail.com", "johnyvtk@gmail.com", "1sreerajvs@gmail.com"]
+        mail_list = ["jyothisvthomas@gmail.com", "johnyvtk@gmail.com", "1sreerajvs@gmail.com", "darisvengaloor@gmail.com"]
         # setup the parameters of the message
         password = "jgmanjbbv"
         msg['From'] = "johnythomas.online@gmail.com"
