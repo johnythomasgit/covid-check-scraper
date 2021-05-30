@@ -13,7 +13,7 @@ import requests
 # global variables and settings
 notification_url = 'https://notify.run/ycPOsrn5eGW7Ntc5'
 mail_list = ["manuchry1993@gmail.com"]
-pin_code = '689595'
+pin_code = '686101'
 file_path = "storage_temp.txt"
 available_centers = []
 available_count = 0
@@ -126,15 +126,18 @@ def covid_center_search():
 
     if (available_count > 0) and (available_count != history['available_count']):
         push_notification(str(available_count) + " covid Vaccines available for youth")
-        send_mail("Covid Vaccine available for youth", ",<br/>".join(available_centers)
-                  + "<br/><br/>Total - " + str(available_count)
-                  + "<br/><br/> Please subscribe to " + notification_url + " to receive notifications")
+        if available_count > history['available_count']:
+            send_mail("Covid Vaccine available for youth", ",<br/>".join(available_centers)
+                      + "<br/><br/>Total - " + str(available_count)
+                      + "<br/><br/> Please subscribe to " + notification_url + " to receive notifications")
 
     if (elder_available_count > 0) and (elder_available_count != history['elder_available_count']):
         push_notification(str(elder_available_count) + " covid Vaccines available for senior citizens")
-        send_mail("Covid Vaccine available for senior citizens", ",<br/>".join(elder_available_centers)
-                  + "<br/><br/>Total - " + str(elder_available_count)
-                  + "<br/><br/> Please subscribe to " + notification_url + " to receive notifications")
+        if elder_available_count > history['elder_available_count']:
+            send_mail("Covid Vaccine available for senior citizens", ",<br/>".join(elder_available_centers)
+                      + "<br/><br/>Total - " + str(elder_available_count)
+                      + "<br/><br/> Please subscribe to " + notification_url + " to receive notifications")
+    write_file(available_count, elder_available_count, file_path)
 
 
 if __name__ == "__main__":
