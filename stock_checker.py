@@ -129,13 +129,13 @@ def covid_center_search():
                         # print(str(elder_available_count))
     print("available_count - " + str(available_count))
     print("elder_available_count - " + str(elder_available_count))
-    if (available_count > 0) and (available_count != history['available_count']):
+    if (available_count > 0) and (available_count > int(history['available_count'])):
         send_mail("Covid Vaccine available for youth", ",<br/>".join(available_centers)
                   + "<br/><br/>Total - " + str(available_count)
                   + "<br/><br/> Please subscribe to https://notify.run/c/uIaG3jKEsyPGz13w to receive notifications")
         # push_notification(str(available_count) + " covid Vaccines available for youth")
 
-    if (elder_available_count > 0) and (elder_available_count != history['elder_available_count']):
+    if (elder_available_count > 0) and (elder_available_count > int(history['elder_available_count'])):
         send_mail("Covid Vaccine available for senior citizens", ",<br/>".join(elder_available_centers)
                   + "<br/><br/>Total - " + str(elder_available_count)
                   + "<br/><br/> Please subscribe to https://notify.run/c/uIaG3jKEsyPGz13w to receive notifications")
