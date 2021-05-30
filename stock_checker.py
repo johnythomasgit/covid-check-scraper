@@ -114,7 +114,7 @@ def covid_center_search():
 
         for center in response_json.get("centers"):
             for session in center.get("sessions"):
-                if int(session["available_capacity"]) > 0:
+                if int(session["available_capacity_dose1"]) > 0:
                     if int(session.get("min_age_limit")) < 45:
                         available_centers.append(
                             "{} {} available at {} on {}".format(session['available_capacity_dose1'], session['vaccine'],
