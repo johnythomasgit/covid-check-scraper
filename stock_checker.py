@@ -37,7 +37,7 @@ def send_mail(subject, message):
     try:
         msg = email.message.Message()
         #
-        mail_list = ["jyothisvthomas@gmail.com", "johnyvtk@gmail.com", "darisvengaloor@gmail.com"]
+        mail_list = ["jyothisvthomas@gmail.com", "johnyvtk@gmail.com", "darisvengaloor@gmail.com", "manuchry1993@gmail.com", "anandjosektm@gmail.com"]
         # setup the parameters of the message
         password = "jgmanjbbv"
         msg['From'] = "johnythomas.online@gmail.com"
@@ -96,7 +96,7 @@ def covid_center_search():
         except:
             print("Error occurred in reading file")
 
-    for period in range(6):
+    for period in range(2):
         new_date = datetime.datetime.today() + datetime.timedelta(days=period * 7)
         new_date_str = new_date.strftime("%d-%m-%Y")
         covin_url = "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id=304" \

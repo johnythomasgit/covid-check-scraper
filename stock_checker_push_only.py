@@ -50,7 +50,7 @@ def covid_center_search():
         except:
             print("Error occurred in reading file")
 
-    for period in range(6):
+    for period in range(2):
         new_date = datetime.datetime.today() + datetime.timedelta(days=period*7)
         new_date_str = new_date.strftime("%d-%m-%Y")
         print(new_date_str)

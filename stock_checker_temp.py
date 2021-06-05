@@ -90,12 +90,11 @@ def covid_center_search():
         except:
             print("Error occurred in reading file")
 
-    for period in range(6):
+    for period in range(2):
         new_date = datetime.datetime.today() + datetime.timedelta(days=period * 7)
         new_date_str = new_date.strftime("%d-%m-%Y")
         print(new_date_str)
-        covin_url = "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByPin?pincode=" + pin_code \
-                    + "&date=" + new_date_str
+        covin_url = "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id=301&date=" + new_date_str
         headers = {
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) '
                           'Chrome/39.0.2171.95 Safari/537.36',
@@ -125,14 +124,14 @@ def covid_center_search():
     print("elder_available_count - " + str(elder_available_count))
 
     if (available_count > 0) and (available_count != history['available_count']):
-        push_notification(str(available_count) + " covid Vaccines available for youth")
+        push_notification(str(available_count) + " Covid Vaccines Alleppey available for youth")
         if available_count > int(history['available_count']):
             send_mail("Covid Vaccine available for youth", ",<br/>".join(available_centers)
                       + "<br/><br/>Total - " + str(available_count)
                       + "<br/><br/> Please subscribe to " + notification_url + " to receive notifications")
 
     if (elder_available_count > 0) and (elder_available_count != history['elder_available_count']):
-        push_notification(str(elder_available_count) + " covid Vaccines available for senior citizens")
+        push_notification(str(elder_available_count) + " Covid Vaccines Alleppey available for senior citizens")
         if elder_available_count > int(history['elder_available_count']):
             send_mail("Covid Vaccine available for senior citizens", ",<br/>".join(elder_available_centers)
                       + "<br/><br/>Total - " + str(elder_available_count)
