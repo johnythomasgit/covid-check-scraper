@@ -12,7 +12,7 @@ import requests
 
 # global variables and settings
 notification_url = 'https://notify.run/ycPOsrn5eGW7Ntc5'
-mail_list = ["manuchry1993@gmail.com"]
+mail_list = ["manuchry1993@gmail.com, ajaxdq3@gmail.com"]
 pin_code = '686101'
 file_path = "storage_temp.txt"
 available_centers = []
