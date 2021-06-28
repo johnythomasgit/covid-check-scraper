@@ -8,17 +8,18 @@ import smtplib
 import socket
 import sys
 import time
+
 import requests
 
 # global variables and settings
 notification_url = 'https://notify.run/uIaG3jKEsyPGz13w'
-# notification_url = 'https://notify.run/5rK8Fg6qaiUc70r9'
+# sample test notification_url = 'https://notify.run/5rK8Fg6qaiUc70r9'
 district_id = 304
 mail_list = ["jyothisvthomas@gmail.com", "johnyvtk@gmail.com", "darisvengaloor@gmail.com", "manuchry1993@gmail.com",
              "anandjosektm@gmail.com", "ajaxdq3@gmail.com"]
 history = {}
 availability_map = {}
-file_path = "storage_push.txt"
+file_path = "storage.txt"
 
 
 def send_mail(subject, message):
@@ -72,14 +73,14 @@ def read_file():
     try:
         with open(file_path) as file:
             history = json.load(file)
-            print(history)
+            print("history : " + str(history))
             return history
     except:
         print("Error occurred in reading file")
 
 
 def covid_center_search():
-    print("covid center availability search PUSH only - " + datetime.datetime.now().strftime("%H:%M:%S"))
+    print("covid center availability search - " + datetime.datetime.now().strftime("%H:%M:%S"))
 
     if not os.path.exists(file_path):
         print("file not exists")
@@ -106,24 +107,31 @@ def covid_center_search():
             for session in center.get("sessions"):
                 if int(session["available_capacity_dose1"]) > 0:
                     if session["min_age_limit"] not in availability_map:
-                        availability_map[session.get("min_age_limit")] = {"available_centers": [], "available_count": 0}
+                        availability_map[session["min_age_limit"]] = {"available_centers": [], "available_count": 0}
                     availability_map[session["min_age_limit"]]["available_centers"].append(
                         "{} {} available at {} on {}".format(session['available_capacity_dose1'],
                                                              session['vaccine'],
                                                              center['name'], session['date']))
-                    availability_map[session.get("min_age_limit")]["available_count"] += int(
+                    availability_map[session["min_age_limit"]]["available_count"] += int(
                         session['available_capacity_dose1'])
+    print("availability_map :" + str(availability_map))
     for key in availability_map:
-        if (key not in history) or (availability_map[key]["available_count"] > history[key]["available_count"]):
+        print("str(key) not in history : " + str(str(key) not in history))
+        print("availability_map[str(key)][\"available_count\"] > history[str(key)][\"available_count\"]")
+        print(str(availability_map[str(key)]["available_count"]) + ">" + str(history[str(key)]["available_count"]))
+        print(availability_map[str(key)]["available_count"] > history[str(key)]["available_count"])
 
+        if (str(key) not in history) or \
+                (availability_map[str(key)]["available_count"] > history[str(key)]["available_count"]):
             push_notification(
                 "{} covid Vaccines available for {}+".format(availability_map[key]["available_count"], key))
 
             send_mail("{} covid Vaccines available for {}+".format(availability_map[key]["available_count"], key),
                       ",<br/>".join(availability_map[key]["available_centers"])
                       + "<br/><br/>Total - " + str(availability_map[key]["available_count"])
-                      + "<br/><br/> Please subscribe to "+notification_url+" to receive notifications")
-    write_file(availability_map)
+                      + "<br/><br/> Please subscribe to " + notification_url + " to receive notifications")
+    if availability_map:
+        write_file(availability_map)
 
 
 if __name__ == "__main__":
