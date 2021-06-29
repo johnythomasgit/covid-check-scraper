@@ -131,8 +131,7 @@ def covid_center_search():
                       ",<br/>".join(availability_map[key]["available_centers"])
                       + "<br/><br/>Total - " + str(availability_map[key]["available_count"])
                       + "<br/><br/> Please subscribe to " + notification_url + " to receive notifications")
-    if availability_map:
-        write_file(availability_map)
+    write_file(availability_map)
 
 
 if __name__ == "__main__":
