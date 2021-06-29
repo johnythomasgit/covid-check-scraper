@@ -28,8 +28,8 @@ def send_mail(subject, message):
         msg = email.message.Message()
         #
         # setup the parameters of the message
-        password = "jgmanjbbv"
-        msg['From'] = "johnythomas.online@gmail.com"
+        password = os.environ['MAIL_PASSWORD']
+        msg['From'] = os.environ['MAIL_USERNAME']
         msg['To'] = ", ".join(mail_list)
         msg['Subject'] = subject + " " + datetime.datetime.now().strftime("%b,%d %I:%M %p")
 
@@ -80,6 +80,7 @@ def read_file():
 
 
 def covid_center_search():
+    global history, availability_map
     print("covid center availability search - " + datetime.datetime.now().strftime("%H:%M:%S"))
 
     if not os.path.exists(file_path):
@@ -106,31 +107,34 @@ def covid_center_search():
         for center in response_json.get("centers"):
             for session in center.get("sessions"):
                 if int(session["available_capacity_dose1"]) > 0:
-                    if session["min_age_limit"] not in availability_map:
-                        availability_map[session["min_age_limit"]] = {"available_centers": [], "available_count": 0}
-                    availability_map[session["min_age_limit"]]["available_centers"].append(
+                    if str(session["min_age_limit"]) not in availability_map:
+                        availability_map[str(session["min_age_limit"])] = {"available_centers": [],
+                                                                           "available_count": 0}
+                    availability_map[str(session["min_age_limit"])]["available_centers"].append(
                         "{} {} available at {} on {}".format(session['available_capacity_dose1'],
                                                              session['vaccine'],
                                                              center['name'], session['date']))
-                    availability_map[session["min_age_limit"]]["available_count"] += int(
+                    availability_map[str(session["min_age_limit"])]["available_count"] += int(
                         session['available_capacity_dose1'])
+
     print("availability_map :" + str(availability_map))
     for key in availability_map:
-        print("str(key) not in history : " + str(str(key) not in history))
-        if str(key) in history:
-            print("availability_map[str(key)][\"available_count\"] > history[str(key)][\"available_count\"]")
-            print(str(availability_map[str(key)]["available_count"]) + ">" + str(history[str(key)]["available_count"]))
-            print(availability_map[str(key)]["available_count"] > history[str(key)]["available_count"])
+        print("key not in history : " + key not in history)
+        if key in history:
+            print("availability_map[key][\"available_count\"] > history[key][\"available_count\"]")
+            print(str(availability_map[key]["available_count"]) + ">" + str(history[key]["available_count"]))
+            print(availability_map[key]["available_count"] > history[key]["available_count"])
 
-        if (str(key) not in history) or \
-                (availability_map[str(key)]["available_count"] > history[str(key)]["available_count"]):
+        if (key not in history) or \
+                (availability_map[key]["available_count"] > history[key]["available_count"]):
+            print("inside push")
             push_notification(
                 "{} covid Vaccines available for {}+".format(availability_map[key]["available_count"], key))
-
             send_mail("{} covid Vaccines available for {}+".format(availability_map[key]["available_count"], key),
                       ",<br/>".join(availability_map[key]["available_centers"])
                       + "<br/><br/>Total - " + str(availability_map[key]["available_count"])
                       + "<br/><br/> Please subscribe to " + notification_url + " to receive notifications")
+
     write_file(availability_map)
 
 
