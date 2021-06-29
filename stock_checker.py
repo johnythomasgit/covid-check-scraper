@@ -117,9 +117,10 @@ def covid_center_search():
     print("availability_map :" + str(availability_map))
     for key in availability_map:
         print("str(key) not in history : " + str(str(key) not in history))
-        print("availability_map[str(key)][\"available_count\"] > history[str(key)][\"available_count\"]")
-        print(str(availability_map[str(key)]["available_count"]) + ">" + str(history[str(key)]["available_count"]))
-        print(availability_map[str(key)]["available_count"] > history[str(key)]["available_count"])
+        if str(key) in history:
+            print("availability_map[str(key)][\"available_count\"] > history[str(key)][\"available_count\"]")
+            print(str(availability_map[str(key)]["available_count"]) + ">" + str(history[str(key)]["available_count"]))
+            print(availability_map[str(key)]["available_count"] > history[str(key)]["available_count"])
 
         if (str(key) not in history) or \
                 (availability_map[str(key)]["available_count"] > history[str(key)]["available_count"]):
