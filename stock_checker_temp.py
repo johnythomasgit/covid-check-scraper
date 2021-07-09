@@ -118,15 +118,8 @@ def covid_center_search():
 
     print("availability_map :" + str(availability_map))
     for key in availability_map:
-        print("key not in history : " + key not in history)
-        if key in history:
-            print("availability_map[key][\"available_count\"] > history[key][\"available_count\"]")
-            print(str(availability_map[key]["available_count"]) + ">" + str(history[key]["available_count"]))
-            print(availability_map[key]["available_count"] > history[key]["available_count"])
-
         if (key not in history) or \
                 (availability_map[key]["available_count"] > history[key]["available_count"]):
-            print("inside push")
             push_notification(
                 "{} covid Vaccines available for {}+".format(availability_map[key]["available_count"], key))
             send_mail("{} covid Vaccines available for {}+".format(availability_map[key]["available_count"], key),
@@ -138,7 +131,6 @@ def covid_center_search():
 
 
 if __name__ == "__main__":
-    print(os.environ)
     os.environ['TZ'] = 'Asia/Kolkata'
     time.tzset()
     covid_center_search()
