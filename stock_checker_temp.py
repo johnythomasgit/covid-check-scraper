@@ -8,28 +8,29 @@ import smtplib
 import socket
 import sys
 import time
+
 import requests
 
 # global variables and settings
 notification_url = 'https://notify.run/ycPOsrn5eGW7Ntc5'
+# sample test notification_url = 'https://notify.run/5rK8Fg6qaiUc70r9'
+district_id = 301
 mail_list = ["manuchry1993@gmail.com, ajaxdq3@gmail.com"]
-pin_code = '686101'
+history = {}
+availability_map = {}
 file_path = "storage_temp.txt"
-available_centers = []
-available_count = 0
-elder_available_centers = []
-elder_available_count = 0
 
 
 def send_mail(subject, message):
     # create message object instance
     try:
         msg = email.message.Message()
+        #
         # setup the parameters of the message
-        password = "jgmanjbbv"
-        msg['From'] = "johnythomas.online@gmail.com"
+        password = os.environ['MAIL_PASSWORD']
+        msg['From'] = os.environ['MAIL_USERNAME']
         msg['To'] = ", ".join(mail_list)
-        msg['Subject'] = subject
+        msg['Subject'] = subject + " " + datetime.datetime.now().strftime("%b,%d %I:%M %p")
 
         # add in the message body
         msg.add_header('Content-Type', 'text/html')
@@ -59,87 +60,86 @@ def push_notification(message):
         'Content-Type': 'application/x-www-form-urlencoded'
     }
     response = requests.request("POST", notification_url, headers=headers, data=message)
-    print(response.text)
+    # print(response.text)
 
 
-def write_file(available_count, elder_available_count, file_path):
-    history = {
-        "available_count": available_count,
-        "elder_available_count": elder_available_count,
-        "timestamp": str(datetime.datetime.now().timestamp())
-    }
+def write_file(availability_info):
     with open(file_path, 'w') as file:
-        json.dump(history, file)
+        json.dump(availability_info, file)
+
+
+def read_file():
+    try:
+        with open(file_path) as file:
+            history = json.load(file)
+            print("history : " + str(history))
+            return history
+    except:
+        print("Error occurred in reading file")
 
 
 def covid_center_search():
-    print("covid center availability search TEMP - " + datetime.datetime.now().strftime("%H:%M:%S"))
-    global available_count, elder_available_count
-    history = {
-        "available_count": available_count,
-        "elder_available_count": elder_available_count,
-        "timestamp": str(datetime.datetime.now().timestamp())
-    }
+    global history, availability_map
+    print("covid center availability search - " + datetime.datetime.now().strftime("%H:%M:%S"))
+
     if not os.path.exists(file_path):
-        write_file(0, 0, file_path)
+        print("file not exists")
     else:
-        try:
-            with open(file_path) as file:
-                history = json.load(file)
-                print(history)
-        except:
-            print("Error occurred in reading file")
+        history = read_file()
 
     for period in range(2):
         new_date = datetime.datetime.today() + datetime.timedelta(days=period * 7)
         new_date_str = new_date.strftime("%d-%m-%Y")
-        print(new_date_str)
-        covin_url = "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id=301&date=" + new_date_str
+        url = "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id={}" \
+              "&date={}".format(district_id, new_date_str)
         headers = {
-            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) '
-                          'Chrome/39.0.2171.95 Safari/537.36',
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36',
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
             'Accept-Language': 'en-US,en;q=0.8',
             'Host': 'cdn-api.co-vin.in',
             'Connection': 'keep-alive'
         }
-        response = requests.get(covin_url, headers=headers)
-        print(response.text)
+        response = requests.get(url, headers=headers)
+        # print(response.text)
         response_json = response.json()
 
         for center in response_json.get("centers"):
             for session in center.get("sessions"):
                 if int(session["available_capacity_dose1"]) > 0:
-                    if int(session.get("min_age_limit")) < 45:
-                        available_centers.append(
-                            "{} {} available at {} on {}".format(session['available_capacity_dose1'], session['vaccine'],
-                                                                 center['name'], session['date']))
-                        available_count += int(session['available_capacity_dose1'])
-                    else:
-                        elder_available_centers.append(
-                            "{} {} available at {} on {}".format(session['available_capacity_dose1'], session['vaccine'],
-                                                                 center['name'], session['date']))
-                        elder_available_count += int(session['available_capacity_dose1'])
-    print("available_count - " + str(available_count))
-    print("elder_available_count - " + str(elder_available_count))
+                    if str(session["min_age_limit"]) not in availability_map:
+                        availability_map[str(session["min_age_limit"])] = {"available_centers": [],
+                                                                           "available_count": 0}
+                    availability_map[str(session["min_age_limit"])]["available_centers"].append(
+                        "{} {} available at {} on {}".format(session['available_capacity_dose1'],
+                                                             session['vaccine'],
+                                                             center['name'], session['date']))
+                    availability_map[str(session["min_age_limit"])]["available_count"] += int(
+                        session['available_capacity_dose1'])
 
-    if (available_count > 0) and (available_count != history['available_count']):
-        push_notification(str(available_count) + " Covid Vaccines Alleppey available for youth")
-        if available_count > int(history['available_count']):
-            send_mail("Covid Vaccine available for youth Alleppey", ",<br/>".join(available_centers)
-                      + "<br/><br/>Total - " + str(available_count)
+    print("availability_map :" + str(availability_map))
+    for key in availability_map:
+        print("key not in history : " + key not in history)
+        if key in history:
+            print("availability_map[key][\"available_count\"] > history[key][\"available_count\"]")
+            print(str(availability_map[key]["available_count"]) + ">" + str(history[key]["available_count"]))
+            print(availability_map[key]["available_count"] > history[key]["available_count"])
+
+        if (key not in history) or \
+                (availability_map[key]["available_count"] > history[key]["available_count"]):
+            print("inside push")
+            push_notification(
+                "{} covid Vaccines available for {}+".format(availability_map[key]["available_count"], key))
+            send_mail("{} covid Vaccines available for {}+".format(availability_map[key]["available_count"], key),
+                      ",<br/>".join(availability_map[key]["available_centers"])
+                      + "<br/><br/>Total - " + str(availability_map[key]["available_count"])
                       + "<br/><br/> Please subscribe to " + notification_url + " to receive notifications")
 
-    if (elder_available_count > 0) and (elder_available_count != history['elder_available_count']):
-        push_notification(str(elder_available_count) + " Covid Vaccines Alleppey available for senior citizens")
-        if elder_available_count > int(history['elder_available_count']):
-            send_mail("Covid Vaccine available for senior citizens Alleppey", ",<br/>".join(elder_available_centers)
-                      + "<br/><br/>Total - " + str(elder_available_count)
-                      + "<br/><br/> Please subscribe to " + notification_url + " to receive notifications")
-    write_file(available_count, elder_available_count, file_path)
+    write_file(availability_map)
 
 
 if __name__ == "__main__":
+    print(os.environ)
     os.environ['TZ'] = 'Asia/Kolkata'
     time.tzset()
     covid_center_search()
+
