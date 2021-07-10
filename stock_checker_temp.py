@@ -15,7 +15,7 @@ import requests
 notification_url = 'https://notify.run/ycPOsrn5eGW7Ntc5'
 # sample test notification_url = 'https://notify.run/5rK8Fg6qaiUc70r9'
 district_id = 301
-mail_list = ["manuchry1993@gmail.com, ajaxdq3@gmail.com"]
+mail_list = ["manuchry1993@gmail.com, ajaxdq3@gmail.com, johnythomas.in@gmail.com"]
 history = {}
 availability_map = {}
 file_path = "storage_temp.txt"
