@@ -1,2 +1,2 @@
-# Stock Check 
-Basic webscraper script in python for checking stock availability.
+# Covid Vaccine Check 
+Basic webscraper script in python for checking vaccine availability and alerting via email.
